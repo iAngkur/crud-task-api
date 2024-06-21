@@ -1,4 +1,3 @@
-import mongoose from "mongoose";
 import express from "express";
 import { Task } from '../database/models/task.js';
 
@@ -14,11 +13,24 @@ taskRouter.get('/', (req, res) => {
     });
 });
 
+taskRouter.get('/:taskId', (req, res) => {
+    console.log(req.params);
+
+    Task.findById(req.params.taskId)
+    .then((task) => {
+        res.status(200).send(task);
+    })
+    .catch(err => {
+        console.error(err);
+    });
+});
+
 taskRouter.post('/', (req, res) => {
     
     const task = new Task({
         title: req.body.title,
-        _taskListId: req.body.taskListId
+        _taskListId: req.body.tasklistId,
+        completed: req.body.completed
     });
 
     task.save()
@@ -27,8 +39,29 @@ taskRouter.post('/', (req, res) => {
         console.error(err);
     });
 });
-// taskRouter.put();
-// taskRouter.patch();
-// taskRouter.delete();
+
+taskRouter.put('/:taskId', (req, res) => {
+    Task.findOneAndUpdate({_id: req.params.taskId}, {$set: req.body}, {new: true})
+    .then(task =>{
+        res.status(200).send(task);
+    })
+    .catch(err => console.error(err));
+});
+
+taskRouter.patch('/:taskId', (req, res) => {
+    Task.findOneAndUpdate({_id: req.params.taskId}, {$set: req.body}, {new: true})
+    .then(task =>{
+        res.status(200).send(task);
+    })
+    .catch(err => console.error(err));
+});
+
+taskRouter.delete('/:taskId', (req, res) => {
+    Task.findByIdAndDelete(req.params.taskId)
+    .then(task =>{
+        res.status(200).send(task);
+    })
+    .catch(err => console.error(err));
+});
 
 export default taskRouter;
