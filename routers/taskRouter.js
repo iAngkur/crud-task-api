@@ -13,6 +13,19 @@ taskRouter.get('/', async (req, res) => {
     }
 });
 
+taskRouter.post('/', async (req, res) => {
+    const task = new Task({
+        title: req.body.title,
+        _taskListId: req.tasklistId 
+    });
+
+    task.save()
+        .then(task => res.status(201).send(task))
+        .catch(err => {
+            console.error(err);
+        });
+});
+
 taskRouter.get('/:taskId', (req, res) => {
     Task.findOne({_taskListId: req.tasklistId, _id: req.params.taskId})
     .then(task =>{

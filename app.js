@@ -15,8 +15,6 @@ app.use(cors({
 }));
 
 app.use(`${api}/tasklists`, taskListRouter);
-//app.use(`${api}/tasks`, taskRouter);
-
 
 await databaseConnection(process.env.DB_URL, process.env.DB_NAME);
 

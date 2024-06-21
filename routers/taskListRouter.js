@@ -1,6 +1,7 @@
 import express from "express";
 import { TaskList } from '../database/models/taskList.js';
 import taskRouter from "./taskRouter.js";
+import { Task } from "../database/models/task.js";
 
 const taskListRouter = express.Router();
 
@@ -57,11 +58,20 @@ taskListRouter.patch('/:tasklistId', (req, res) => {
 });
 
 taskListRouter.delete('/:tasklistId', (req, res) => {
-    TaskList.findByIdAndDelete(req.params.tasklistId)
+
+    const deleteAllContainingTasks = (taskList) => {
+        Task.deleteMany({_taskListId: taskList._id})
+            .then(() => taskList)
+            .catch(err => console.log(err));
+    }
+
+    const responseTaskList = TaskList.findByIdAndDelete(req.params.tasklistId)
         .then(taskList => {
-            res.status(200).send(taskList);
+            deleteAllContainingTasks(taskList);
         })
         .catch(err => console.error(err));
+
+    res.status(200).send(responseTaskList);
 });
 
 taskListRouter.use('/:tasklistId/tasks', (req, res, next) => {
