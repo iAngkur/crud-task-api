@@ -1,14 +1,24 @@
 import express from 'express';
-import mongoose from "mongoose";
+import taskRouter from './routers/taskRouter.js';
+import taskListRouter from './routers/taskListRouter.js';
 import databaseConnection from './database/mongoose.js';
 import 'dotenv/config';
+import cors from 'cors';
 
 const app = express();
-await databaseConnection(process.env.DB_URL, process.env.DB_NAME);
+const api = process.env.API_URL;
 
-app.get('/', (req, res) => {
-    res.send('Hello World');
-});
+app.use(express.json());
+app.use(express.urlencoded({extended: true}));
+app.use(cors({
+    origin: '*'
+}));
+
+app.use(`${api}/tasklists`, taskListRouter);
+app.use(`${api}/tasks`, taskRouter);
+
+
+await databaseConnection(process.env.DB_URL, process.env.DB_NAME);
 
 app.listen(process.env.PORT, () => {
     console.clear();
