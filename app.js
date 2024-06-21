@@ -1,13 +1,16 @@
 import express from 'express';
+import mongoose from "mongoose";
+import databaseConnection from './database/mongoose.js';
+import 'dotenv/config';
 
 const app = express();
-const PORT = 3000;
+await databaseConnection(process.env.DB_URL, process.env.DB_NAME);
 
 app.get('/', (req, res) => {
     res.send('Hello World');
 });
 
-app.listen(PORT, () => {
+app.listen(process.env.PORT, () => {
     console.clear();
-    console.log(`Server is running on ${PORT}`);
+    console.log(`Server is running on ${process.env.PORT}`);
 });
